@@ -1,1 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soko Yetu — Live Promo Editor · Buphagus Bridge Ltd</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;800;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #D4A017;
+  --gold2: #F5C518;
+  --gold3: rgba(212,160,23,0.1);
+  --amber: #E07B0A;
+  --red: #DC2626;
+  --red2: #FF4444;
+  --wa: #25D366;
+  --black: #050608;
+  --dark: #090C10;
+  --panel: #0D1117;
+  --card: #111820;
+  --border: rgba(212,160,23,0.18);
+  --border2: rgba(255,255,255,0.06);
+  --white: #F8F4EC;
+  --muted: rgba(248,244,236,0.4);
+  --green: #16A34A;
+}
 
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow Condensed', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══ HEADER ═══ */
+.hdr {
+  background: var(--dark);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+
+.hdr-brand { display:flex; align-items:center; gap:10px; }
+
+.hdr-logo {
+  width:34px; height:34px; border-radius:8px;
+  background:var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue'; font-size:18px; color:var(--black);
+  flex-shrink:0;
+}
+
+.hdr-name { font-family:'Bebas Neue'; font-size:18px; letter-spacing:3px; }
+.hdr-sub { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); opacity:.6; }
+
+.hdr-badge {
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:rgba(37,211,102,.7);
+  border:1px solid rgba(37,211,102,.25);
+  padding:4px 10px; border-radius:20px;
+  display:flex; align-items:center; gap:6px;
+}
+
+.live-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--wa);
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ═══ TEMPLATE SELECTOR ═══ */
+.tpl-bar {
+  background:var(--panel);
+  border-bottom:1px solid var(--border2);
+  display:flex; gap:2px; padding:0 16px;
+  overflow-x:auto; scrollbar-width:none;
+  position:sticky; top:63px; z-index:200;
+}
+.tpl-bar::-webkit-scrollbar { display:none; }
+
+.tpl-btn {
+  background:none; border:none;
+  border-bottom:3px solid transparent;
+  color:var(--muted);
+  font-family:'DM Mono', monospace; font-size:10px;
+  letter-spacing:2px; text-transform:uppercase;
+  padding:13px 18px 10px; cursor:pointer;
+  white-space:nowrap; transition:all .2s;
+}
+.tpl-btn:hover { color:var(--white); }
+.tpl-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ═══ MAIN LAYOUT ═══ */
+.main {
+  display:grid;
+  grid-template-columns: 340px 1fr;
+  min-height: calc(100vh - 120px);
+}
+
+@media(max-width:760px) {
+  .main { grid-template-columns:1fr; }
+  .preview-col { order:-1; }
+}
+
+/* ═══ INPUT PANEL ═══ */
+.input-col {
+  background:var(--panel);
+  border-right:1px solid var(--border2);
+  padding:24px 20px;
+  overflow-y:auto;
+  max-height:calc(100vh - 120px);
+  position:sticky;
+  top:120px;
+}
+
+.ip-section { margin-bottom:24px; }
+
+.ip-label {
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+
+.ip-label::after {
+  content:''; flex:1; height:1px;
+  background:rgba(212,160,23,.15);
+}
+
+/* Input fields */
+.field { margin-bottom:10px; }
+
+.field-lbl {
+  font-family:'DM Mono', monospace; font-size:8px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:4px; display:block;
+}
+
+.field input, .field select {
+  width:100%;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:6px;
+  padding:9px 12px;
+  color:var(--white);
+  font-family:'Barlow Condensed', sans-serif;
+  font-size:15px; font-weight:600; letter-spacing:.3px;
+  outline:none; transition:border-color .2s;
+  -webkit-appearance:none;
+}
+
+.field input:focus, .field select:focus {
+  border-color:rgba(212,160,23,.4);
+  background:rgba(212,160,23,.04);
+}
+
+.field select option { background:#1A1A1A; }
+
+/* Product rows */
+.product-row {
+  display:grid; grid-template-columns:1fr 90px 28px;
+  gap:6px; margin-bottom:6px; align-items:center;
+}
+
+.product-row input {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:6px; padding:8px 10px;
+  color:var(--white);
+  font-family:'Barlow Condensed', sans-serif;
+  font-size:14px; font-weight:600;
+  outline:none; transition:border-color .2s;
+  width:100%;
+}
+
+.product-row input:focus { border-color:rgba(212,160,23,.35); }
+
+.product-row input.price-in {
+  text-align:right;
+  color:var(--gold2);
+}
+
+.del-btn {
+  background:rgba(220,38,38,.1);
+  border:1px solid rgba(220,38,38,.2);
+  color:rgba(220,38,38,.6);
+  border-radius:5px; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:14px;
+  transition:all .2s; flex-shrink:0;
+}
+.del-btn:hover { background:rgba(220,38,38,.25); color:#FF6060; }
+
+.add-btn {
+  width:100%;
+  background:rgba(212,160,23,.08);
+  border:1px dashed rgba(212,160,23,.3);
+  color:rgba(212,160,23,.6);
+  border-radius:6px; padding:8px;
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase;
+  cursor:pointer; transition:all .2s; margin-top:4px;
+}
+.add-btn:hover { background:rgba(212,160,23,.15); color:var(--gold); }
+
+/* Category blocks */
+.cat-block {
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:8px; padding:12px; margin-bottom:10px;
+}
+
+.cat-block-head {
+  display:flex; align-items:center; gap:8px; margin-bottom:10px;
+}
+
+.cat-emoji-sel {
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:5px; padding:4px 8px;
+  color:var(--white); font-size:16px;
+  cursor:pointer; outline:none;
+  width:44px; text-align:center;
+  font-family:'Barlow Condensed', sans-serif;
+}
+
+.cat-name-in {
+  flex:1;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:6px; padding:6px 10px;
+  color:var(--white);
+  font-family:'Barlow Condensed', sans-serif;
+  font-size:14px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  outline:none;
+}
+.cat-name-in:focus { border-color:rgba(212,160,23,.35); }
+
+/* Action buttons */
+.action-row {
+  display:flex; gap:8px; margin-top:16px;
+}
+
+.act-btn {
+  flex:1; padding:11px 14px;
+  border-radius:8px; border:none;
+  font-family:'Bebas Neue'; font-size:16px;
+  letter-spacing:2px; cursor:pointer;
+  transition:all .2s;
+}
+
+.act-primary {
+  background:var(--gold); color:var(--black);
+}
+.act-primary:hover { background:var(--gold2); transform:scale(1.02); }
+
+.act-secondary {
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:var(--muted);
+}
+.act-secondary:hover { background:rgba(255,255,255,.1); color:var(--white); }
+
+/* Tip box */
+.tip-box {
+  background:rgba(37,211,102,.06);
+  border:1px solid rgba(37,211,102,.15);
+  border-radius:8px; padding:12px;
+  margin-top:16px;
+}
+.tip-box p {
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:1px; line-height:1.7;
+  color:rgba(37,211,102,.6);
+}
+
+/* ═══ PREVIEW COLUMN ═══ */
+.preview-col {
+  padding:32px 24px;
+  display:flex; flex-direction:column;
+  align-items:center; gap:16px;
+  background:var(--black);
+}
+
+.preview-label {
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--muted); text-align:center;
+}
+
+/* Card frame 9:16 */
+.card-frame {
+  width:280px;
+  aspect-ratio:9/16;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  box-shadow: 0 0 0 1px var(--border), 0 30px 80px rgba(0,0,0,.9);
+  flex-shrink:0;
+}
+
+/* Watermark */
+.card-frame::after {
+  content:'Concept by Albuk Global';
+  position:absolute; bottom:10px; left:50%;
+  transform:translateX(-50%);
+  font-family:'DM Mono', monospace; font-size:7px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:rgba(255,255,255,.18);
+  background:rgba(0,0,0,.3);
+  padding:3px 10px; border-radius:20px;
+  white-space:nowrap; pointer-events:none; z-index:999;
+}
+
+.card-frame.light-wm::after {
+  color:rgba(0,0,0,.18); background:rgba(255,255,255,.28);
+}
+
+/* Screenshot hint */
+.screenshot-hint {
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:rgba(212,160,23,.4); text-align:center;
+}
+
+/* Pages */
+.tpl-page { display:none; width:100%; align-items:center; flex-direction:column; gap:16px; }
+.tpl-page.active { display:flex; }
+
+/* ════════════════════════
+   TEMPLATE 1 — HOT DEALS
+════════════════════════ */
+.t1 {
+  height:100%; display:flex; flex-direction:column;
+  background:var(--black); position:relative; overflow:hidden;
+}
+
+.t1-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 110% 45% at 50% 0%, rgba(212,160,23,.16) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(224,123,10,.07) 0%, transparent 55%);
+}
+
+.t1-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(212,160,23,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,160,23,.04) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+
+.t1-inner { position:relative; z-index:5; display:flex; flex-direction:column; height:100%; }
+
+.t1h {
+  background:var(--gold); padding:14px 16px 10px;
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.t1h::before {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(0,0,0,.05) 5px,rgba(0,0,0,.05) 10px);
+}
+.t1h-top { position:relative; display:flex; align-items:center; justify-content:space-between; }
+.t1h-brand { font-family:'Bebas Neue'; font-size:11px; letter-spacing:2px; color:rgba(0,0,0,.5); }
+.t1h-main { position:relative; margin-top:4px; text-align:center; }
+.t1h-title { font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; color:var(--black); line-height:1; }
+.t1h-date { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; color:rgba(0,0,0,.4); text-transform:uppercase; margin-top:2px; }
+
+.t1-body { flex:1; padding:10px 12px 0; display:flex; flex-direction:column; gap:8px; overflow:hidden; }
+
+.t1-cat-lbl {
+  font-family:'DM Mono', monospace; font-size:7px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:5px;
+  padding-bottom:4px; border-bottom:1px solid rgba(212,160,23,.2);
+}
+
+.t1-items { display:flex; flex-direction:column; gap:3px; }
+
+.t1-item {
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:6px; padding:6px 9px;
+}
+
+.t1-iname { font-size:11px; font-weight:600; color:var(--white); letter-spacing:.2px; flex:1; }
+.t1-iprice { font-family:'Bebas Neue'; font-size:17px; color:var(--gold2); letter-spacing:.5px; }
+.t1-ikes { font-family:'DM Mono', monospace; font-size:6px; color:rgba(245,197,24,.45); margin-left:1px; }
+
+.t1-div { height:1px; background:linear-gradient(90deg,transparent,rgba(212,160,23,.2),transparent); margin:2px 12px; flex-shrink:0; }
+
+.t1-foot {
+  background:var(--dark); padding:9px 12px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.t1-del { font-size:9px; font-weight:700; letter-spacing:.3px; color:var(--wa); text-transform:uppercase; }
+.t1-cta {
+  background:var(--gold); color:var(--black);
+  font-family:'Bebas Neue'; font-size:13px; letter-spacing:1.5px;
+  padding:5px 12px; border-radius:4px;
+}
+
+/* ════════════════════════
+   TEMPLATE 2 — FLASH DEAL
+════════════════════════ */
+.t2 {
+  height:100%; display:flex; flex-direction:column;
+  background:#080305; position:relative; overflow:hidden;
+}
+
+.t2-burst {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 30%, rgba(220,38,38,.2) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 30% at 50% 85%, rgba(212,160,23,.09) 0%, transparent 50%);
+  animation:t2p 2s ease-in-out infinite alternate;
+}
+@keyframes t2p { from{opacity:.6} to{opacity:1} }
+
+.t2-scan {
+  position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.012) 3px,rgba(255,255,255,.012) 4px);
+}
+
+.t2-inner { position:relative; z-index:5; display:flex; flex-direction:column; height:100%; }
+
+.t2-alarm {
+  background:var(--red); padding:7px 12px;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  flex-shrink:0; animation:t2a 1.5s ease-in-out infinite;
+}
+@keyframes t2a { 0%,100%{opacity:1} 50%{opacity:.7} }
+.t2-adot { width:6px; height:6px; border-radius:50%; background:#fff; animation:t2d 1s ease-in-out infinite; }
+@keyframes t2d { 0%,100%{opacity:1} 50%{opacity:.15} }
+.t2-atxt { font-family:'Bebas Neue'; font-size:13px; letter-spacing:3px; color:#fff; }
+
+.t2-hero { padding:12px 14px 8px; text-align:center; flex-shrink:0; }
+.t2-logo { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:4px; text-transform:uppercase; color:rgba(212,160,23,.45); margin-bottom:6px; }
+.t2-hl { font-family:'Bebas Neue'; line-height:.92; letter-spacing:2px; }
+.t2-hl .tg { color:var(--gold2); font-size:46px; display:block; }
+.t2-hl .tr { color:var(--red2); font-size:30px; display:block; }
+
+.t2-timer {
+  margin:6px 12px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(220,38,38,.3);
+  border-radius:7px; padding:6px 10px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.t2-tlbl { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(220,38,38,.8); }
+.t2-tval { font-family:'Bebas Neue'; font-size:18px; color:var(--red2); letter-spacing:2px; }
+
+.t2-items { flex:1; padding:0 12px; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
+
+.t2-item {
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(220,38,38,.2);
+  border-left:3px solid var(--red);
+  border-radius:0 7px 7px 0; padding:7px 10px;
+}
+
+.t2-fire { font-size:14px; flex-shrink:0; }
+.t2-iname { font-size:12px; font-weight:700; color:var(--white); flex:1; }
+.t2-ipc { text-align:right; }
+.t2-iprice { font-family:'Bebas Neue'; font-size:20px; color:var(--gold2); line-height:1; }
+.t2-ikes { font-family:'DM Mono', monospace; font-size:6px; color:rgba(245,197,24,.4); }
+
+.t2-stock {
+  margin:6px 12px; flex-shrink:0;
+  background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.22);
+  border-radius:6px; padding:6px 10px;
+  display:flex; align-items:center; gap:6px;
+}
+.t2-stxt { font-size:10px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; color:rgba(255,70,70,.85); }
+
+.t2-foot {
+  background:rgba(0,0,0,.5); padding:10px 12px;
+  flex-shrink:0; text-align:center;
+}
+.t2-url { font-family:'Bebas Neue'; font-size:18px; letter-spacing:3px; color:var(--gold2); display:block; }
+.t2-sub { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+.t2-brand { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(212,160,23,.25); margin-top:5px; }
+
+/* ════════════════════════
+   TEMPLATE 3 — CATEGORY
+════════════════════════ */
+.t3 {
+  height:100%; display:flex; flex-direction:column;
+  background:#F5F0E8; position:relative; overflow:hidden;
+}
+
+.t3-strip {
+  background:var(--black); padding:9px 12px;
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.t3-brand { font-family:'Bebas Neue'; font-size:13px; letter-spacing:3px; color:var(--gold); }
+.t3-tag { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(212,160,23,.35); }
+
+.t3-ribbon {
+  background:var(--gold); padding:9px 12px;
+  position:relative; flex-shrink:0; overflow:hidden;
+}
+.t3-ribbon::before {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(0,0,0,.06) 4px,rgba(0,0,0,.06) 8px);
+}
+.t3-rib-in { position:relative; text-align:center; }
+.t3-rib-title { font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; color:var(--black); line-height:1; }
+.t3-rib-sub { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; color:rgba(0,0,0,.38); text-transform:uppercase; }
+
+.t3-hero {
+  background:linear-gradient(135deg,#FFF8E7,#FFEEBC); padding:14px 14px 10px;
+  text-align:center; flex-shrink:0;
+}
+.t3-icon { font-size:38px; display:block; margin-bottom:3px; }
+.t3-cname { font-family:'Bebas Neue'; font-size:24px; letter-spacing:2px; color:#1A1A1A; line-height:1; }
+.t3-csub { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(0,0,0,.3); margin-top:2px; }
+
+.t3-items { flex:1; padding:8px 12px 6px; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
+
+.t3-item {
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.92); border-radius:7px;
+  padding:8px 10px; border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+.t3-check { font-size:12px; margin-right:7px; flex-shrink:0; }
+.t3-iname { font-size:12px; font-weight:700; color:#1A1A1A; flex:1; }
+.t3-price-pill {
+  background:var(--gold); color:var(--black);
+  font-family:'Bebas Neue'; font-size:15px; letter-spacing:.5px;
+  padding:2px 9px; border-radius:3px; white-space:nowrap;
+}
+
+.t3-notice {
+  margin:0 12px 6px; padding:6px 10px; flex-shrink:0;
+  background:rgba(220,38,38,.07); border:1px solid rgba(220,38,38,.18);
+  border-radius:5px; text-align:center;
+}
+.t3-ntxt { font-size:10px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; color:rgba(170,0,0,.75); }
+
+.t3-foot {
+  background:var(--black); padding:10px 12px;
+  flex-shrink:0; text-align:center;
+}
+.t3-url { font-family:'Bebas Neue'; font-size:16px; letter-spacing:3px; color:var(--gold2); display:block; }
+.t3-app { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(212,160,23,.35); margin-top:2px; }
+
+/* ════════════════════════
+   TEMPLATE 4 — FESTIVE
+════════════════════════ */
+.t4 {
+  height:100%; display:flex; flex-direction:column;
+  background:#06080A; position:relative; overflow:hidden;
+}
+.t4-stars {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,220,80,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 10%, rgba(255,220,80,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 55%, rgba(255,220,80,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 42%, rgba(255,220,80,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 78%, rgba(255,220,80,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 28%, rgba(255,255,255,.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 65%, rgba(255,255,255,.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 85%, rgba(255,220,80,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 50%, rgba(255,255,255,.2) 0%, transparent 100%);
+}
+.t4-glow {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(180,110,0,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 35% at 50% 100%, rgba(100,60,0,.18) 0%, transparent 50%);
+}
+.t4-moon {
+  position:absolute; top:12px; right:14px; font-size:26px; opacity:.9;
+  filter:drop-shadow(0 0 8px rgba(255,200,50,.5));
+  animation:t4f 3s ease-in-out infinite alternate; z-index:6;
+}
+@keyframes t4f { from{transform:translateY(0)} to{transform:translateY(-5px)} }
+.t4-inner { position:relative; z-index:5; display:flex; flex-direction:column; height:100%; }
+.t4h { flex-shrink:0; padding:16px 16px 10px; text-align:center; }
+.t4h-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(212,160,23,.14); border:1px solid rgba(212,160,23,.28);
+  border-radius:20px; padding:3px 12px; margin-bottom:8px;
+  font-family:'DM Mono', monospace; font-size:8px;
+  letter-spacing:3px; text-transform:uppercase; color:var(--gold2);
+}
+.t4h-occasion { font-family:'Bebas Neue'; font-size:13px; letter-spacing:4px; color:var(--gold); display:block; }
+.t4h-title {
+  font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px;
+  line-height:.95; color:var(--white); margin-bottom:6px;
+}
+.t4h-title .t4a { color:var(--gold2); display:block; font-size:36px; }
+.t4h-rule { width:50px; height:1px; margin:6px auto 4px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+.t4h-sub { font-family:'DM Mono', monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:rgba(212,160,23,.45); }
+.t4-items { flex:1; padding:6px 13px; display:flex; flex-direction:column; gap:4px; overflow:hidden; }
+.t4-item {
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.04); border:1px solid rgba(212,160,23,.13);
+  border-radius:7px; padding:7px 10px; position:relative; overflow:hidden;
+}
+.t4-item::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,var(--gold2),var(--amber));
+}
+.t4-iname { font-size:11px; font-weight:700; color:var(--white); flex:1; padding-left:6px; letter-spacing:.2px; }
+.t4-iright { text-align:right; }
+.t4-iprice { font-family:'Bebas Neue'; font-size:18px; color:var(--gold2); line-height:1; }
+.t4-ikes { font-family:'DM Mono', monospace; font-size:6px; color:rgba(245,197,24,.4); }
+.t4-ornament { flex-shrink:0; text-align:center; padding:3px 0; font-size:10px; letter-spacing:5px; color:rgba(212,160,23,.25); }
+.t4-foot { flex-shrink:0; padding:9px 14px; background:rgba(0,0,0,.45); border-top:1px solid rgba(212,160,23,.14); }
+.t4-greeting { font-family:'Bebas Neue'; font-size:13px; letter-spacing:3px; color:var(--gold2); text-align:center; display:block; margin-bottom:6px; }
+.t4-foot-row { display:flex; align-items:center; justify-content:space-between; }
+.t4-del { font-size:9px; font-weight:700; color:var(--wa); text-transform:uppercase; letter-spacing:.3px; }
+.t4-cta { background:var(--gold); color:var(--black); font-family:'Bebas Neue'; font-size:13px; letter-spacing:1.5px; padding:5px 13px; border-radius:4px; }
+.t4-brand { text-align:center; margin-top:5px; font-family:'DM Mono', monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(212,160,23,.22); }
+
+/* ═══ CAPTION BOX ═══ */
+.caption-box {
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-radius:12px; padding:18px;
+  max-width:280px; width:100%;
+}
+
+.cb-label {
+  font-family:'DM Mono', monospace; font-size:8px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:10px;
+}
+
+.cb-text {
+  font-family:'DM Mono', monospace; font-size:10px;
+  line-height:1.9; color:rgba(248,244,236,.6);
+  white-space:pre-line;
+}
+
+.copy-btn {
+  width:100%; margin-top:12px;
+  background:rgba(37,211,102,.1);
+  border:1px solid rgba(37,211,102,.25);
+  color:rgba(37,211,102,.8);
+  font-family:'DM Mono', monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase;
+  padding:9px; border-radius:6px; cursor:pointer;
+  transition:all .2s;
+}
+.copy-btn:hover { background:rgba(37,211,102,.2); color:var(--wa); }
+.copy-btn.copied { background:rgba(37,211,102,.25); color:var(--wa); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo">SY</div>
+    <div>
+      <div class="hdr-name">Soko Yetu Live Editor</div>
+      <span class="hdr-sub">Buphagus Bridge Ltd · Promotional System · Albuk Global</span>
+    </div>
+  </div>
+  <div class="hdr-badge">
+    <div class="live-dot"></div>
+    Live Preview
+  </div>
+</div>
+
+<!-- TEMPLATE SELECTOR -->
+<div class="tpl-bar">
+  <button class="tpl-btn active" onclick="switchTpl('t1',this)">🔥 Daily Hot Deals</button>
+  <button class="tpl-btn" onclick="switchTpl('t2',this)">⚡ Flash Deal</button>
+  <button class="tpl-btn" onclick="switchTpl('t3',this)">🛒 Category Campaign</button>
+  <button class="tpl-btn" onclick="switchTpl('t4',this)">🎉 Festive / Special Day</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══ INPUT PANEL ═══ -->
+  <div class="input-col" id="inputPanel">
+
+    <!-- ── TEMPLATE 1 INPUTS ── -->
+    <div id="inp-t1">
+
+      <div class="ip-section">
+        <div class="ip-label">Header Info</div>
+        <div class="field">
+          <span class="field-lbl">Post Title</span>
+          <input type="text" id="t1-title-in" value="TODAY'S HOT DEALS" oninput="u('t1-title',this.value)" placeholder="TODAY'S HOT DEALS">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Date</span>
+          <input type="text" id="t1-date-in" value="Wednesday · 28 May 2025" oninput="u('t1-date',this.value)" placeholder="Wednesday · 28 May 2025">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Delivery Note</span>
+          <input type="text" id="t1-del-in" value="🚚 Fast Delivery" oninput="u('t1-del',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">CTA Button Text</span>
+          <input type="text" id="t1-cta-in" value="ORDER NOW" oninput="u('t1-cta',this.value)">
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Category 1</div>
+        <div class="cat-block">
+          <div class="cat-block-head">
+            <input class="cat-emoji-sel" type="text" id="t1-c1-emoji" value="🌾" oninput="renderT1()" maxlength="2">
+            <input class="cat-name-in" type="text" id="t1-c1-name" value="GRAINS & FLOUR" oninput="renderT1()" placeholder="Category Name">
+          </div>
+          <div id="t1-c1-rows"></div>
+          <button class="add-btn" onclick="addRow('t1-c1')">+ Add Product</button>
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Category 2</div>
+        <div class="cat-block">
+          <div class="cat-block-head">
+            <input class="cat-emoji-sel" type="text" id="t1-c2-emoji" value="🥤" oninput="renderT1()" maxlength="2">
+            <input class="cat-name-in" type="text" id="t1-c2-name" value="BEVERAGES" oninput="renderT1()" placeholder="Category Name">
+          </div>
+          <div id="t1-c2-rows"></div>
+          <button class="add-btn" onclick="addRow('t1-c2')">+ Add Product</button>
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Category 3</div>
+        <div class="cat-block">
+          <div class="cat-block-head">
+            <input class="cat-emoji-sel" type="text" id="t1-c3-emoji" value="🍬" oninput="renderT1()" maxlength="2">
+            <input class="cat-name-in" type="text" id="t1-c3-name" value="SNACKS" oninput="renderT1()" placeholder="Category Name">
+          </div>
+          <div id="t1-c3-rows"></div>
+          <button class="add-btn" onclick="addRow('t1-c3')">+ Add Product</button>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <p>💡 Type product name on the left, price on the right. The template updates instantly as you type. Max 2–3 items per category for best layout.</p>
+      </div>
+
+    </div>
+
+    <!-- ── TEMPLATE 2 INPUTS ── -->
+    <div id="inp-t2" style="display:none">
+
+      <div class="ip-section">
+        <div class="ip-label">Flash Deal Info</div>
+        <div class="field">
+          <span class="field-lbl">Alarm Bar Text</span>
+          <input type="text" id="t2-alarm-in" value="⚡ FLASH DEAL — TODAY ONLY ⚡" oninput="u('t2-alarm-txt',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Main Headline (Top)</span>
+          <input type="text" id="t2-hl-top-in" value="GRAB" oninput="u('t2-hl-top',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Main Headline (Bottom)</span>
+          <input type="text" id="t2-hl-bot-in" value="BEFORE IT'S GONE" oninput="u('t2-hl-bot',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Timer / Deadline Text</span>
+          <input type="text" id="t2-timer-in" value="TODAY ONLY" oninput="u('t2-tval',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Stock Warning</span>
+          <input type="text" id="t2-stock-in" value="⚠️ Limited stock — order now before it runs out!" oninput="u('t2-stxt',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Website / CTA URL</span>
+          <input type="text" id="t2-url-in" value="SOKOYETU.SHOP" oninput="u('t2-url',this.value)">
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Flash Deal Products</div>
+        <div id="t2-rows"></div>
+        <button class="add-btn" onclick="addRow('t2')">+ Add Product</button>
+      </div>
+
+      <div class="tip-box">
+        <p>💡 Flash deals work best with 3–5 products maximum. Use high-value or fast-moving items. Post on Wednesday at 12 PM for maximum impact.</p>
+      </div>
+
+    </div>
+
+    <!-- ── TEMPLATE 3 INPUTS ── -->
+    <div id="inp-t3" style="display:none">
+
+      <div class="ip-section">
+        <div class="ip-label">Campaign Info</div>
+        <div class="field">
+          <span class="field-lbl">Category Icon (emoji)</span>
+          <input type="text" id="t3-icon-in" value="🌾" maxlength="2" oninput="u('t3-icon',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Category Name</span>
+          <input type="text" id="t3-cname-in" value="GRAINS & FLOUR" oninput="u('t3-cname',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Ribbon Headline</span>
+          <input type="text" id="t3-rib-in" value="🌾 WEEKEND FLOUR OFFERS" oninput="u('t3-rib-title',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Stock Notice</span>
+          <input type="text" id="t3-notice-in" value="⚡ Order before stock runs low" oninput="u('t3-ntxt',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Website</span>
+          <input type="text" id="t3-url-in" value="SOKOYETU.SHOP" oninput="u('t3-url',this.value)">
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Products in this Category</div>
+        <div id="t3-rows"></div>
+        <button class="add-btn" onclick="addRow('t3')">+ Add Product</button>
+      </div>
+
+      <div class="tip-box">
+        <p>💡 Category campaigns work best with 4–6 items from the same group. Rotate category each afternoon: Mon=Flour, Tue=Drinks, Thu=Snacks, Fri=Household.</p>
+      </div>
+
+    </div>
+
+    <!-- ── TEMPLATE 4 INPUTS ── -->
+    <div id="inp-t4" style="display:none">
+
+      <div class="ip-section">
+        <div class="ip-label">Occasion Info</div>
+        <div class="field">
+          <span class="field-lbl">Occasion Name (e.g. Eid Al-Adha)</span>
+          <input type="text" id="t4-occasion-in" value="Eid Al-Adha" oninput="u('t4-occasion',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Main Headline Line 1</span>
+          <input type="text" id="t4-hl1-in" value="SPECIAL" oninput="u('t4-hl1',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Main Headline Line 2 (Gold)</span>
+          <input type="text" id="t4-hl2-in" value="OFFERS" oninput="u('t4-hl2',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Festive Greeting</span>
+          <input type="text" id="t4-greeting-in" value="🌙 Eid Mubarak from Soko Yetu" oninput="u('t4-greeting',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Moon / Occasion Emoji</span>
+          <input type="text" id="t4-moon-in" value="🌙" maxlength="2" oninput="u('t4-moon',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">Delivery Note</span>
+          <input type="text" id="t4-del-in" value="🚚 Fast Delivery" oninput="u('t4-del4',this.value)">
+        </div>
+        <div class="field">
+          <span class="field-lbl">CTA Button</span>
+          <input type="text" id="t4-cta-in" value="ORDER NOW" oninput="u('t4-cta4',this.value)">
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-label">Featured Products</div>
+        <div id="t4-rows"></div>
+        <button class="add-btn" onclick="addRow('t4')">+ Add Product</button>
+      </div>
+
+      <div class="tip-box">
+        <p>💡 Festive templates work for Eid, Christmas, Easter, Madaraka Day, New Year and any special occasion. Change the moon emoji to match — 🎄 for Christmas, 🥚 for Easter, 🇰🇪 for national days.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ═══ PREVIEW COLUMN ═══ -->
+  <div class="preview-col">
+
+    <div class="preview-label">Live Preview · 9:16 Story Format</div>
+
+    <!-- T1 Preview -->
+    <div class="tpl-page active" id="prev-t1">
+      <div class="card-frame">
+        <div class="t1">
+          <div class="t1-glow"></div>
+          <div class="t1-grid"></div>
+          <div class="t1-inner">
+            <div class="t1h">
+              <div class="t1h-top">
+                <span class="t1h-brand">Soko Yetu</span>
+                <span style="font-size:12px">🔥🔥</span>
+                <span class="t1h-brand">Syokimau</span>
+              </div>
+              <div class="t1h-main">
+                <div class="t1h-title" id="t1-title">TODAY'S HOT DEALS</div>
+                <div class="t1h-date" id="t1-date">Wednesday · 28 May 2025</div>
+              </div>
+            </div>
+            <div class="t1-body" id="t1-body"></div>
+            <div class="t1-div"></div>
+            <div class="t1-foot">
+              <div class="t1-del" id="t1-del">🚚 Fast Delivery</div>
+              <div class="t1-cta" id="t1-cta">ORDER NOW</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption-box">
+        <div class="cb-label">📋 WhatsApp Caption</div>
+        <div class="cb-text" id="t1-caption"></div>
+        <button class="copy-btn" onclick="copyCaption('t1-caption',this)">Copy Caption</button>
+      </div>
+
+      <div class="screenshot-hint">Screenshot the card above to share</div>
+    </div>
+
+    <!-- T2 Preview -->
+    <div class="tpl-page" id="prev-t2">
+      <div class="card-frame">
+        <div class="t2">
+          <div class="t2-burst"></div>
+          <div class="t2-scan"></div>
+          <div class="t2-inner">
+            <div class="t2-alarm">
+              <div class="t2-adot"></div>
+              <div class="t2-atxt" id="t2-alarm-txt">⚡ FLASH DEAL — TODAY ONLY ⚡</div>
+              <div class="t2-adot"></div>
+            </div>
+            <div class="t2-hero">
+              <div class="t2-logo">SOKO YETU · SYOKIMAU</div>
+              <div class="t2-hl">
+                <span class="tg" id="t2-hl-top">GRAB</span>
+                <span class="tr" id="t2-hl-bot">BEFORE IT'S GONE</span>
+              </div>
+            </div>
+            <div class="t2-timer">
+              <span class="t2-tlbl">⏳ Offer Ends</span>
+              <span class="t2-tval" id="t2-tval">TODAY ONLY</span>
+            </div>
+            <div class="t2-items" id="t2-items-preview"></div>
+            <div class="t2-stock">
+              <span style="font-size:11px">⚠️</span>
+              <span class="t2-stxt" id="t2-stxt">⚠️ Limited stock — order now before it runs out!</span>
+            </div>
+            <div class="t2-foot">
+              <span class="t2-url" id="t2-url">SOKOYETU.SHOP</span>
+              <div class="t2-sub">📲 App users get priority delivery</div>
+              <div class="t2-brand">SOKO YETU · SYOKIMAU TERRITORY</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption-box">
+        <div class="cb-label">📋 WhatsApp Caption</div>
+        <div class="cb-text" id="t2-caption"></div>
+        <button class="copy-btn" onclick="copyCaption('t2-caption',this)">Copy Caption</button>
+      </div>
+
+      <div class="screenshot-hint">Screenshot the card above to share</div>
+    </div>
+
+    <!-- T3 Preview -->
+    <div class="tpl-page" id="prev-t3">
+      <div class="card-frame light-wm">
+        <div class="t3">
+          <div class="t3-strip">
+            <span class="t3-brand">SOKO YETU</span>
+            <span class="t3-tag">Syokimau Territory</span>
+          </div>
+          <div class="t3-ribbon">
+            <div class="t3-rib-in">
+              <div class="t3-rib-title" id="t3-rib-title">🌾 WEEKEND FLOUR OFFERS</div>
+              <div class="t3-rib-sub">Fresh Stock · Available Now</div>
+            </div>
+          </div>
+          <div class="t3-hero">
+            <span class="t3-icon" id="t3-icon">🌾</span>
+            <div class="t3-cname" id="t3-cname">GRAINS & FLOUR</div>
+            <div class="t3-csub">Best prices this week</div>
+          </div>
+          <div class="t3-items" id="t3-items-preview"></div>
+          <div class="t3-notice">
+            <span class="t3-ntxt" id="t3-ntxt">⚡ Order before stock runs low</span>
+          </div>
+          <div class="t3-foot">
+            <span class="t3-url" id="t3-url">SOKOYETU.SHOP</span>
+            <div class="t3-app">📲 Download the Soko Yetu App</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption-box">
+        <div class="cb-label">📋 WhatsApp Caption</div>
+        <div class="cb-text" id="t3-caption"></div>
+        <button class="copy-btn" onclick="copyCaption('t3-caption',this)">Copy Caption</button>
+      </div>
+
+      <div class="screenshot-hint">Screenshot the card above to share</div>
+    </div>
+
+    <!-- T4 Preview -->
+    <div class="tpl-page" id="prev-t4">
+      <div class="card-frame">
+        <div class="t4">
+          <div class="t4-stars"></div>
+          <div class="t4-glow"></div>
+          <div class="t4-moon" id="t4-moon">🌙</div>
+          <div class="t4-inner">
+            <div class="t4h">
+              <div class="t4h-badge">
+                <span>✨</span>
+                <span id="t4-occasion">Eid Al-Adha</span>
+              </div>
+              <div class="t4h-title">
+                <span id="t4-hl1">SPECIAL</span>
+                <span class="t4a" id="t4-hl2">OFFERS</span>
+              </div>
+              <div class="t4h-rule"></div>
+              <div class="t4h-sub">Soko Yetu · Syokimau Territory</div>
+            </div>
+            <div class="t4-items" id="t4-items-preview"></div>
+            <div class="t4-ornament">· · · · · · · · ·</div>
+            <div class="t4-foot">
+              <span class="t4-greeting" id="t4-greeting">🌙 Eid Mubarak from Soko Yetu</span>
+              <div class="t4-foot-row">
+                <div class="t4-del" id="t4-del4">🚚 Fast Delivery</div>
+                <div class="t4-cta" id="t4-cta4">ORDER NOW</div>
+              </div>
+              <div class="t4-brand">sokoyetu.shop · powered by albuk global</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption-box">
+        <div class="cb-label">📋 WhatsApp Caption</div>
+        <div class="cb-text" id="t4-caption"></div>
+        <button class="copy-btn" onclick="copyCaption('t4-caption',this)">Copy Caption</button>
+      </div>
+
+      <div class="screenshot-hint">Screenshot the card above to share</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Data stores ──
+const data = {
+  't1-c1': [{name:'Ajab Wheat 2kg', price:'1,959'},{name:'Tupike Maize 2kg', price:'1,700'}],
+  't1-c2': [{name:'Coca Cola 2L', price:'1,029'},{name:'Sprite 350ml', price:'495'}],
+  't1-c3': [{name:'Ringoz', price:'435'},{name:'Bitez', price:'415'}],
+  't2':    [{name:'Postman', price:'5,079'},{name:'Raha Premium 2kg', price:'2,269'},{name:'Predator', price:'625'}],
+  't3':    [{name:'Ajab Wheat 2kg', price:'1,959'},{name:'Ajab Wheat 1kg', price:'1,989'},{name:'210 Wheat 2kg', price:'1,859'},{name:'Tupike Maize 2kg', price:'1,700'}],
+  't4':    [
+    {name:'Ajab 2kg', price:'1,959'},
+    {name:'Indus Brown Basmati Rice', price:'3,169'},
+    {name:'Afia Mango 500ml', price:'755'},
+    {name:'Coca Cola 1L', price:'1,039'},
+    {name:'Softcare Diapers HC', price:'659'},
+    {name:'Predator', price:'625'},
+    {name:'Dola Maize 2kg', price:'1,809'},
+  ],
+};
+
+// ── Simple field update ──
+function u(id, val) {
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
+  updateCaptions();
+}
+
+// ── Add product row ──
+function addRow(cat) {
+  data[cat].push({name:'', price:''});
+  renderRows(cat);
+  renderPreviews();
+}
+
+function removeRow(cat, idx) {
+  data[cat].splice(idx,1);
+  renderRows(cat);
+  renderPreviews();
+}
+
+function renderRows(cat) {
+  const container = document.getElementById(cat+'-rows');
+  if(!container) return;
+  container.innerHTML = '';
+  data[cat].forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.innerHTML = `
+      <input type="text" value="${item.name}" placeholder="Product name"
+        oninput="data['${cat}'][${i}].name=this.value;renderPreviews()">
+      <input type="text" class="price-in" value="${item.price}" placeholder="Price"
+        oninput="data['${cat}'][${i}].price=this.value;renderPreviews()">
+      <button class="del-btn" onclick="removeRow('${cat}',${i})">×</button>
+    `;
+    container.appendChild(row);
+  });
+}
+
+// ── Render all previews ──
+function renderPreviews() {
+  renderT1();
+  renderT2();
+  renderT3();
+  renderT4();
+  updateCaptions();
+}
+
+function renderT4() {
+  const container = document.getElementById('t4-items-preview');
+  if(!container) return;
+  let html = '';
+  data['t4'].forEach(it => {
+    if(it.name || it.price) {
+      html += `<div class="t4-item">
+        <span class="t4-iname">${it.name}</span>
+        <div class="t4-iright">
+          <div class="t4-iprice">${it.price}</div>
+          <div class="t4-ikes">KSh</div>
+        </div>
+      </div>`;
+    }
+  });
+  container.innerHTML = html;
+}
+
+function renderT1() {
+  const body = document.getElementById('t1-body');
+  if(!body) return;
+  const cats = ['c1','c2','c3'];
+  let html = '';
+  cats.forEach(c => {
+    const emoji = document.getElementById(`t1-${c}-emoji`)?.value || '';
+    const name  = document.getElementById(`t1-${c}-name`)?.value || '';
+    const items = data[`t1-${c}`];
+    if(!items || items.length === 0) return;
+    html += `<div class="t1-cat">
+      <div class="t1-cat-lbl">${emoji} ${name}</div>
+      <div class="t1-items">`;
+    items.forEach(it => {
+      if(it.name || it.price) {
+        html += `<div class="t1-item">
+          <span class="t1-iname">${it.name}</span>
+          <div><span class="t1-iprice">${it.price}</span><span class="t1-ikes"> KSh</span></div>
+        </div>`;
+      }
+    });
+    html += '</div></div>';
+  });
+  body.innerHTML = html;
+}
+
+function renderT2() {
+  const container = document.getElementById('t2-items-preview');
+  if(!container) return;
+  let html = '';
+  data['t2'].forEach(it => {
+    if(it.name || it.price) {
+      html += `<div class="t2-item">
+        <span class="t2-fire">🔥</span>
+        <span class="t2-iname">${it.name}</span>
+        <div class="t2-ipc">
+          <div class="t2-iprice">${it.price}</div>
+          <div class="t2-ikes">KSh</div>
+        </div>
+      </div>`;
+    }
+  });
+  container.innerHTML = html;
+}
+
+function renderT3() {
+  const container = document.getElementById('t3-items-preview');
+  if(!container) return;
+  let html = '';
+  data['t3'].forEach(it => {
+    if(it.name || it.price) {
+      html += `<div class="t3-item">
+        <span class="t3-check">✅</span>
+        <span class="t3-iname">${it.name}</span>
+        <span class="t3-price-pill">${it.price}</span>
+      </div>`;
+    }
+  });
+  container.innerHTML = html;
+}
+
+// ── Auto-generate captions ──
+function updateCaptions() {
+  // T1
+  const t1date = document.getElementById('t1-date')?.textContent || '';
+  let t1cap = `🔥 *TODAY'S HOT DEALS*\n📅 ${t1date}\n`;
+  ['c1','c2','c3'].forEach(c => {
+    const emoji = document.getElementById(`t1-${c}-emoji`)?.value || '';
+    const name  = document.getElementById(`t1-${c}-name`)?.value || '';
+    const items = data[`t1-${c}`].filter(i => i.name);
+    if(items.length) {
+      t1cap += `\n${emoji} *${name}*\n`;
+      items.forEach(i => { t1cap += `• ${i.name} — KSh ${i.price}\n`; });
+    }
+  });
+  t1cap += `\n🛒 Full catalogue → *sokoyetu.shop*\n📲 Download the Soko Yetu App\n🚚 Fast delivery available\n\n_Prices valid today. Subject to availability._`;
+  const t1el = document.getElementById('t1-caption');
+  if(t1el) t1el.textContent = t1cap;
+
+  // T2
+  let t2cap = `⚡ *FLASH DEAL — TODAY ONLY*\n\n🔥 These prices won't last long.\nStock is limited — first come, first served.\n\n`;
+  data['t2'].filter(i=>i.name).forEach(i => { t2cap += `🔥 ${i.name} — KSh ${i.price}\n`; });
+  t2cap += `\n📲 Order now → *${document.getElementById('t2-url')?.textContent || 'sokoyetu.shop'}*\n🚀 App users get priority delivery!\n\n_⏳ Offer ends today._`;
+  const t2el = document.getElementById('t2-caption');
+  if(t2el) t2el.textContent = t2cap;
+
+  // T3
+  const t3cat = document.getElementById('t3-cname')?.textContent || '';
+  let t3cap = `🛒 *${t3cat} DEALS TODAY*\n\nStock is fresh and ready.\nOrder quickly before it runs low 👆\n\n`;
+  data['t3'].filter(i=>i.name).forEach(i => { t3cap += `✅ ${i.name} — KSh ${i.price}\n`; });
+  t3cap += `\n📲 Full list → *sokoyetu.shop*\n🚚 Fast delivery available\n\n_Available today. Subject to stock._`;
+  const t3el = document.getElementById('t3-caption');
+  if(t3el) t3el.textContent = t3cap;
+
+  // T4 — Festive
+  const t4occasion = document.getElementById('t4-occasion')?.textContent || '';
+  const t4greeting = document.getElementById('t4-greeting')?.textContent || '';
+  let t4cap = `✨ *${t4occasion.toUpperCase()} SPECIAL OFFERS*\n\n${t4greeting}\n\nCelebrate with the best prices:\n\n`;
+  data['t4'].filter(i=>i.name).forEach(i => { t4cap += `✅ ${i.name} — KSh ${i.price}\n`; });
+  t4cap += `\n🛒 Order now → *sokoyetu.shop*\n📲 Download the Soko Yetu App\n🚚 Fast delivery available\n\n_Prices valid today. Subject to availability._`;
+  const t4el = document.getElementById('t4-caption');
+  if(t4el) t4el.textContent = t4cap;
+}
+
+// ── Copy caption ──
+function copyCaption(id, btn) {
+  const text = document.getElementById(id)?.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Caption'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── Switch template ──
+function switchTpl(tpl, btn) {
+  document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  ['t1','t2','t3','t4'].forEach(t => {
+    document.getElementById('inp-'+t).style.display = t===tpl ? '' : 'none';
+    const prev = document.getElementById('prev-'+t);
+    if(prev) prev.classList.toggle('active', t===tpl);
+  });
+}
+
+// ── Init all rows ──
+function init() {
+  ['t1-c1','t1-c2','t1-c3','t2','t3','t4'].forEach(renderRows);
+  renderPreviews();
+}
+
+init();
+</script>
+</body>
+</html>
